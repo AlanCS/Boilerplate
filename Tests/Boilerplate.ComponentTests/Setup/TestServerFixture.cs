@@ -26,7 +26,7 @@ namespace Boilerplate.ComponentTests.Setup
 
         private void StartServer()
         {
-            MocksFolder = new Regex(@"\\bin\\.*").Replace(System.Environment.CurrentDirectory, "") + @"\ComponentTesting\Mocks";
+            MocksFolder = new Regex(@"\\bin\\.*").Replace(System.Environment.CurrentDirectory, "") + @"\Mocks";
 
             var builder = new WebHostBuilder()
                 .UseStartup<Startup>()
@@ -39,8 +39,7 @@ namespace Boilerplate.ComponentTests.Setup
                 })
                 .ConfigureInterceptionOfHttpClientCalls()
                 .IntercepLogs(minimumLevelToIntercept: LogLevel.Information,
-                                namespaceToIncludeStart: new[] { "MovieProject" },
-                                namespaceToExcludeStart: new[] { "Microsoft" })
+                                namespaceToIncludeStart: new[] { "Boilerplate" })
                 .UseEnvironment("Development");
 
             Server = new TestServer(builder);

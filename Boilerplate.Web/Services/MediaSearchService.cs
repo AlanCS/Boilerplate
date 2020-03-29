@@ -1,10 +1,16 @@
 ﻿using Boilerplate.Infrastructure;
+using Boilerplate.Web.DTO;
 using Boilerplate.Web.Proxy;
 using System.Threading.Tasks;
 
 namespace Boilerplate.Web.Services
 {
-    public class MediaSearchService
+    public interface IMediaSearchService
+    {
+        Task<Media> GetMovieOrTvSeries(MediaType type, string name);
+    }
+
+    public class MediaSearchService : IMediaSearchService
     {
         private readonly IMovieDatabaseProxy _movieDatabaseProxy;
         private readonly IMemoryCacheAdapter _memoryCache;
