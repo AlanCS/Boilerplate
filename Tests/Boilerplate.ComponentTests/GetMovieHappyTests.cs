@@ -28,9 +28,9 @@ namespace Boilerplate.ComponentTests
             // arrange
             var client = Fixture.Server.CreateClient();
             client.CreateSession();
-            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.MocksFolder}/OmdbApi/Real_Responses/Happy/200_ContainsMostFields_TheMatrix.txt");
+            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.StubsFolder}/OmdbApi/Real_Responses/Happy/200_ContainsMostFields_TheMatrix.txt");
             var matrixMovieUrl = $"{MovieUrl}&t=matrix";
-            client.AppendMockHttpCall(HttpMethod.Get, new System.Uri(matrixMovieUrl), response);
+            client.AppendHttpCallStub(HttpMethod.Get, new System.Uri(matrixMovieUrl), response);
 
             // act
             var httpResponse = await client.GetAsync("/api/movie/matrix");
@@ -62,8 +62,8 @@ namespace Boilerplate.ComponentTests
             // arrange
             var client = Fixture.Server.CreateClient();
             client.CreateSession();
-            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.MocksFolder}/OmdbApi/Real_Responses/Happy/200_MovieNotFound.txt");
-            client.AppendMockHttpCall(HttpMethod.Get, new System.Uri($"{MovieUrl}&t=some_weird_title"), response);
+            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.StubsFolder}/OmdbApi/Real_Responses/Happy/200_MovieNotFound.txt");
+            client.AppendHttpCallStub(HttpMethod.Get, new System.Uri($"{MovieUrl}&t=some_weird_title"), response);
 
             // act
             var httpResponse = await client.GetAsync("/api/movie/some_weird_title");
@@ -90,9 +90,9 @@ namespace Boilerplate.ComponentTests
             // arrange
             var client = Fixture.Server.CreateClient();
             client.CreateSession();
-            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.MocksFolder}/OmdbApi/Real_Responses/Happy/200_FewFields_OldMovie.txt");
-            var comeAlongMovieUrl = $"{MovieUrl}&t=come along, do";
-            client.AppendMockHttpCall(HttpMethod.Get, new System.Uri(comeAlongMovieUrl), response);
+            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.StubsFolder}/OmdbApi/Real_Responses/Happy/200_FewFields_OldMovie.txt");
+            var url = $"{MovieUrl}&t=come along, do";
+            client.AppendHttpCallStub(HttpMethod.Get, new System.Uri(url), response);
 
             // act
             var httpResponse = await client.GetAsync("/api/movie/come along, do");
@@ -104,7 +104,7 @@ namespace Boilerplate.ComponentTests
             // assert outgoing
             var outgoingRequests = client.GetSessionOutgoingRequests();
             outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {comeAlongMovieUrl}");
+            outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
             outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
             // assert return
@@ -124,9 +124,9 @@ namespace Boilerplate.ComponentTests
             // arrange
             var client = Fixture.Server.CreateClient();
             client.CreateSession();
-            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.MocksFolder}/OmdbApi/Fake_Responses/Happy/200_NoRunTime_NoPlot_YearTooOld.txt");
-            var comeAlongMovieUrl = $"{MovieUrl}&t=fantastika";
-            client.AppendMockHttpCall(HttpMethod.Get, new System.Uri(comeAlongMovieUrl), response);
+            var response = ResponseFactory.FromFiddlerLikeResponseFile($"{Fixture.StubsFolder}/OmdbApi/Fake_Responses/Happy/200_NoRunTime_NoPlot_YearTooOld.txt");
+            var url = $"{MovieUrl}&t=fantastika";
+            client.AppendHttpCallStub(HttpMethod.Get, new System.Uri(url), response);
 
             // act
             var httpResponse = await client.GetAsync("/api/movie/fantastika");
@@ -138,7 +138,7 @@ namespace Boilerplate.ComponentTests
             // assert outgoing
             var outgoingRequests = client.GetSessionOutgoingRequests();
             outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {comeAlongMovieUrl}");
+            outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
             outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
             // assert return

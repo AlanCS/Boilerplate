@@ -16,7 +16,7 @@ namespace Boilerplate.ComponentTests.Setup
     {
         public TestServer Server { get; private set; }
 
-        public string MocksFolder { get; private set; }
+        public string StubsFolder { get; private set; }
 
         public TestServerFixture()
         {
@@ -26,7 +26,7 @@ namespace Boilerplate.ComponentTests.Setup
 
         private void StartServer()
         {
-            MocksFolder = new Regex(@"\\bin\\.*").Replace(System.Environment.CurrentDirectory, "") + @"\Mocks";
+            StubsFolder = new Regex(@"\\bin\\.*").Replace(System.Environment.CurrentDirectory, "") + @"\Stubs";
 
             var builder = new WebHostBuilder()
                 .UseStartup<Startup>()
@@ -58,10 +58,10 @@ namespace Boilerplate.ComponentTests.Setup
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new ApplicationException("TestServer doesn't respond to basic request to /healthcheck");
 
-            if (MockInstrumentation.UnsessionedLogs.Count > 1)
+            if (ContextRepo.UnsessionedLogs.Count > 1)
                 throw new ApplicationException("Unexpected logs are showing up when starting application");
 
-            if (MockInstrumentation.UnsessionedLogs.FirstOrDefault()?.ToString() != "Information: Application is starting")
+            if (ContextRepo.UnsessionedLogs.FirstOrDefault()?.ToString() != "Information: Application is starting")
                 throw new ApplicationException("Logs don't seem to be wired correctly");
         }
 
