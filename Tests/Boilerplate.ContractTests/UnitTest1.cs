@@ -6,8 +6,7 @@ namespace Boilerplate.ContractTests
     {
         [Fact]
         public void Test1()
-        {
-
+        { 
         }
     }
 }

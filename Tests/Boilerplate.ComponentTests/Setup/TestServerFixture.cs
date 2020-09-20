@@ -37,7 +37,7 @@ namespace Boilerplate.ComponentTests.Setup
                     // make small changes to configuration, such as disabling caching
                     config.AddJsonFile("appsettings.tests.json", optional: false, reloadOnChange: true);
                 })
-                .ConfigureInterceptionOfHttpClientCalls()
+                .InterceptHttpCallsBeforeSending()
                 .IntercepLogs(minimumLevelToIntercept: LogLevel.Information,
                                 namespaceToIncludeStart: new[] { "Boilerplate" })
                 .UseEnvironment("Development");
@@ -58,10 +58,10 @@ namespace Boilerplate.ComponentTests.Setup
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 throw new ApplicationException("TestServer doesn't respond to basic request to /healthcheck");
 
-            if (ContextRepo.UnsessionedLogs.Count > 1)
+            if (UnsessionedData.UnsessionedLogs.Count > 1)
                 throw new ApplicationException("Unexpected logs are showing up when starting application");
 
-            if (ContextRepo.UnsessionedLogs.FirstOrDefault()?.ToString() != "Information: Application is starting")
+            if (UnsessionedData.UnsessionedLogs.FirstOrDefault()?.ToString() != "Information: Application is starting")
                 throw new ApplicationException("Logs don't seem to be wired correctly");
         }
 
