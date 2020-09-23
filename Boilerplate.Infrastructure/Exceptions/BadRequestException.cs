@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Boilerplate.Infrastructure.Exceptions;
+using System;
 
 namespace Boilerplate.Infrastructure
 {
-    public class BadRequestException : ApplicationException
+    public class BadRequestException : BaseException
     {
-        public string InvalidValue { get; set; }
-
-        public BadRequestException(string message, string invalidValue) : base(message)
+        public BadRequestException(string message) : base(message)
         {
-            this.InvalidValue = invalidValue;
+            HttpStatus = System.Net.HttpStatusCode.BadRequest;
+            logLevel = Microsoft.Extensions.Logging.LogLevel.Warning;
         }
     }
 }

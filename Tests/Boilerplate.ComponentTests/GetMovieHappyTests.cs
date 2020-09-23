@@ -1,5 +1,7 @@
 using Boilerplate.ComponentTests.Setup;
+using Boilerplate.Infrastructure.Exceptions;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -35,25 +37,28 @@ namespace Boilerplate.ComponentTests
             // act
             var httpResponse = await client.GetAsync("/api/movie/matrix");
 
-            // assert logs
-            var logs = client.GetSessionLogs();
-            logs.Should().BeEmpty();
+            using (new AssertionScope())
+            {
+                // assert logs
+                var logs = client.GetSessionLogs();
+                logs.Should().BeEmpty();
 
-            // assert outgoing
-            var outgoingRequests = client.GetSessionOutgoingRequests();
-            outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {matrixMovieUrl}");
-            outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
+                // assert outgoing
+                var outgoingRequests = client.GetSessionOutgoingRequests();
+                outgoingRequests.Count.Should().Be(1);
+                outgoingRequests[0].GetEndpoint().Should().Be($"GET {matrixMovieUrl}");
+                outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
-            // assert return
-            httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+                // assert return
+                httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
-            movie.Id.Should().Be("tt0133093");
-            movie.Name.Should().Be("The Matrix");
-            movie.Year.Should().Be("1999");
-            movie.Runtime.Should().Be("2.3h");
-            movie.Plot.Should().Be("A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.");
+                var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
+                movie.Id.Should().Be("tt0133093");
+                movie.Name.Should().Be("The Matrix");
+                movie.Year.Should().Be("1999");
+                movie.Runtime.Should().Be("2.3h");
+                movie.Plot.Should().Be("A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.");
+            }
         }
 
         [Fact]
@@ -68,20 +73,23 @@ namespace Boilerplate.ComponentTests
             // act
             var httpResponse = await client.GetAsync("/api/movie/some_weird_title");
 
-            // assert logs
-            var logs = client.GetSessionLogs();
-            logs.Should().BeEmpty();
+            using (new AssertionScope())
+            {
+                // assert logs
+                var logs = client.GetSessionLogs();
+                logs.Should().BeEmpty();
 
-            // assert outgoing
-            var outgoingRequests = client.GetSessionOutgoingRequests();
-            outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {MovieUrl}&t=some_weird_title");
-            outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
+                // assert outgoing
+                var outgoingRequests = client.GetSessionOutgoingRequests();
+                outgoingRequests.Count.Should().Be(1);
+                outgoingRequests[0].GetEndpoint().Should().Be($"GET {MovieUrl}&t=some_weird_title");
+                outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
-            // assert return
-            httpResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            var message = await httpResponse.ReadBody();
-            message.Should().Be("Search terms didn't match any movie");
+                // assert return
+                httpResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
+                var error = await httpResponse.ReadBody();
+                error.Should().Be(@"""Search terms didn't match any movie""");
+            }
         }
 
         [Fact]
@@ -97,25 +105,28 @@ namespace Boilerplate.ComponentTests
             // act
             var httpResponse = await client.GetAsync("/api/movie/come along, do");
 
-            // assert logs
-            var logs = client.GetSessionLogs();
-            logs.Should().BeEmpty();
+            using (new AssertionScope())
+            {
+                // assert logs
+                var logs = client.GetSessionLogs();
+                logs.Should().BeEmpty();
 
-            // assert outgoing
-            var outgoingRequests = client.GetSessionOutgoingRequests();
-            outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
-            outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
+                // assert outgoing
+                var outgoingRequests = client.GetSessionOutgoingRequests();
+                outgoingRequests.Count.Should().Be(1);
+                outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
+                outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
-            // assert return
-            httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+                // assert return
+                httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
-            movie.Id.Should().Be("tt0000182");
-            movie.Name.Should().Be("Come Along, Do!");
-            movie.Year.Should().Be("1898");
-            movie.Runtime.Should().Be("1 min");
-            movie.Plot.Should().Be("A couple look at a statue while eating in an art gallery.");
+                var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
+                movie.Id.Should().Be("tt0000182");
+                movie.Name.Should().Be("Come Along, Do!");
+                movie.Year.Should().Be("1898");
+                movie.Runtime.Should().Be("1 min");
+                movie.Plot.Should().Be("A couple look at a statue while eating in an art gallery.");
+            }
         }
 
         [Fact]
@@ -131,25 +142,28 @@ namespace Boilerplate.ComponentTests
             // act
             var httpResponse = await client.GetAsync("/api/movie/fantastika");
 
-            // assert logs
-            var logs = client.GetSessionLogs();
-            logs.Should().BeEmpty();
+            using (new AssertionScope())
+            {
+                // assert logs
+                var logs = client.GetSessionLogs();
+                logs.Should().BeEmpty();
 
-            // assert outgoing
-            var outgoingRequests = client.GetSessionOutgoingRequests();
-            outgoingRequests.Count.Should().Be(1);
-            outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
-            outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
+                // assert outgoing
+                var outgoingRequests = client.GetSessionOutgoingRequests();
+                outgoingRequests.Count.Should().Be(1);
+                outgoingRequests[0].GetEndpoint().Should().Be($"GET {url}");
+                outgoingRequests[0].GetHeaderValue("Referer").Should().Be(Web.Constants.Referer);
 
-            // assert return
-            httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+                // assert return
+                httpResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
-            movie.Id.Should().Be("tt1185643");
-            movie.Name.Should().Be("Fantastika vs. Wonderwoman");
-            movie.Runtime.Should().Be("Unknown");
-            movie.Year.Should().Be("Unknown");
-            movie.Plot.Should().Be("");
+                var movie = await httpResponse.ReadJsonBody<Web.DTO.Media>();
+                movie.Id.Should().Be("tt1185643");
+                movie.Name.Should().Be("Fantastika vs. Wonderwoman");
+                movie.Runtime.Should().Be("Unknown");
+                movie.Year.Should().Be("Unknown");
+                movie.Plot.Should().Be("");
+            }
         }
     }
 }

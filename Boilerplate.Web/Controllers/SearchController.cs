@@ -1,4 +1,5 @@
-﻿using Boilerplate.Web.DTO;
+﻿using Boilerplate.Web.Controllers;
+using Boilerplate.Web.DTO;
 using Boilerplate.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -6,8 +7,7 @@ using System.Threading.Tasks;
 namespace MovieProject.Web.Controllers
 {
     [Route("api")]
-    [ApiController]
-    public class SearchController : ControllerBase
+    public class SearchController : ControllerRoot
     {
         private IMediaSearchService _searchService { get; }
 

@@ -35,7 +35,7 @@ namespace Boilerplate.Web
                 .ConfigureHttpClient(c => {
                     c.BaseAddress = new Uri(omdb.BaseAddress);
                     c.DefaultRequestHeaders.Add("Referer", Constants.Referer);
-                    c.Timeout = TimeSpan.FromMilliseconds(omdb.TimeoutGlobalSeconds); // Overall timeout across all tries
+                    c.Timeout = TimeSpan.FromSeconds(omdb.TimeoutGlobalSeconds); // Overall timeout across all tries
                 });
         }
     }

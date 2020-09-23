@@ -1,4 +1,7 @@
+using AutoMapper;
+using BizCover.Api.Cars.Infrastructure;
 using Boilerplate.Infrastructure;
+using Boilerplate.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Filters;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -36,9 +40,22 @@ namespace Boilerplate.Web
             services.AddSingleton<IMemoryCacheAdapter, MemoryCacheAdapter>();
             services.AddTransient<IMemoryCache, MemoryCache>();
 
-            services.AddControllers();
-            services.AddHttpDependencies(Configuration);
-            services.AddHealthChecks();
+            services
+                .AddMvc()
+                .AddJsonOptions(options => {
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
+
+            services
+                .ThrowBadRequestOnBadModelValidation()
+                .AddAutoMapper(typeof(Startup))
+                .AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly())
+                .AddSwaggerGen(c =>
+                {
+                    c.ExampleFilters();
+                })
+                .AddHealthChecks();
 
             // use https://github.com/khellang/Scrutor to register all classes in an assembly (that were not yet registered above)
             // as scoped lifetime
@@ -48,15 +65,14 @@ namespace Boilerplate.Web
                     .UsingRegistrationStrategy(Scrutor.RegistrationStrategy.Skip)
                     .AsImplementedInterfaces()
                     .WithScopedLifetime());
+
+            services.AddHttpDependencies(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ExceptionFilter>();
 
             app.UseHttpsRedirection();
 
@@ -71,6 +87,13 @@ namespace Boilerplate.Web
                     ResponseWriter = WriteResponse
                 });
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                c.RoutePrefix = string.Empty;
             });
 
             // useful for many purposes

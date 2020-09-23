@@ -8,8 +8,10 @@ namespace Boilerplate.Web
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Build(args).Run();
         }
+
+        public static IWebHost Build(string[] args) => CreateHostBuilder(args).Build();
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost

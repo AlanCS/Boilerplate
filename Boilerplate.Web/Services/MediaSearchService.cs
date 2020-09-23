@@ -24,9 +24,9 @@ namespace Boilerplate.Web.Services
         public async Task<DTO.Media> GetMovieOrTvSeries(DTO.MediaType type, string name)
         {
             // could have used usual validators, but because this is simple, and in the spirit of no "magic code", I preferred to do manually
-            if (name == null) throw new BadRequestException("name is empty", name);
+            if (name == null) throw new BadRequestException("name is empty");
             name = name.Trim();
-            if (name.Length < 2) throw new BadRequestException("name has too few characters", name);
+            if (name.Length < 2) throw new BadRequestException("name has too few characters");
 
             string cacheKey = $"{type}_{name.ToLower().Replace(" ", "")}";
 
