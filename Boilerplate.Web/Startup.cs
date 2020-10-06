@@ -2,6 +2,7 @@ using AutoMapper;
 using BizCover.Api.Cars.Infrastructure;
 using Boilerplate.Infrastructure;
 using Boilerplate.Infrastructure.Exceptions;
+using Boilerplate.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -82,10 +83,7 @@ namespace Boilerplate.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions()
-                {
-                    ResponseWriter = WriteResponse
-                });
+                endpoints.AddCustomHealthCheck();
                 endpoints.MapControllers();
             });
 
@@ -101,61 +99,6 @@ namespace Boilerplate.Web
             // - test logging is working correctly easily
             // -- check if component tests can intercept logs
             logger.LogInformation("Application is starting");
-        }
-
-        /// <summary>
-        
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private static Task WriteResponse(HttpContext context, HealthReport result)        
-        {
-            // copied from https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-3.1
-            // then adapted to add app name and version
-
-            context.Response.ContentType = "application/json; charset=utf-8";
-
-            var options = new JsonWriterOptions
-            {
-                Indented = true
-            };
-
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new Utf8JsonWriter(stream, options))
-                {
-                    var assembly = Assembly.GetEntryAssembly().GetName();
-
-                    writer.WriteStartObject();
-                    writer.WriteString("status", result.Status.ToString());
-                    writer.WriteString("name", assembly.Name);
-                    writer.WriteString("version", assembly.Version.ToString()); // this allows us to check if new versions were really deployed
-                    writer.WriteStartObject("results");
-                    foreach (var entry in result.Entries)
-                    {
-                        writer.WriteStartObject(entry.Key);
-                        writer.WriteString("status", entry.Value.Status.ToString());
-                        writer.WriteString("description", entry.Value.Description);
-                        writer.WriteStartObject("data");
-                        foreach (var item in entry.Value.Data)
-                        {
-                            writer.WritePropertyName(item.Key);
-                            JsonSerializer.Serialize(
-                                writer, item.Value, item.Value?.GetType() ??
-                                typeof(object));
-                        }
-                        writer.WriteEndObject();
-                        writer.WriteEndObject();
-                    }
-                    writer.WriteEndObject();
-                    writer.WriteEndObject();
-                }
-
-                var json = Encoding.UTF8.GetString(stream.ToArray());
-
-                return context.Response.WriteAsync(json);
-            }
         }
     }
 }
