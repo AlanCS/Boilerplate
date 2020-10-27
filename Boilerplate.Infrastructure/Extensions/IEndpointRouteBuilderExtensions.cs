@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -13,8 +14,11 @@ namespace Boilerplate.Infrastructure.Extensions
 {
     public static class IEndpointRouteBuilderExtensions
     {
-        public static void AddCustomHealthCheck(this IEndpointRouteBuilder endpoint)
+        private static string EnvName;
+        public static void AddCustomHealthCheck(this IEndpointRouteBuilder endpoint, IWebHostEnvironment env)
         {
+            EnvName = env.EnvironmentName;
+
             endpoint.MapHealthChecks("/healthcheck", new HealthCheckOptions()
             {
                 ResponseWriter = WriteResponse
@@ -47,6 +51,7 @@ namespace Boilerplate.Infrastructure.Extensions
 
                     writer.WriteStartObject();
                     writer.WriteString("name", assembly.Name);
+                    writer.WriteString("environment", EnvName);
                     writer.WriteString("status", result.Status.ToString());
                     writer.WriteString("version", assembly.Version.ToString()); // this allows us to check if new versions were really deployed
                     writer.WriteString("date", System.DateTime.Now.ToString("s"));

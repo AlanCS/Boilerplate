@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,6 +76,8 @@ namespace Boilerplate.Web
         {
             app.UseMiddleware<ExceptionFilter>();
 
+            app.UseRewriter(new RewriteOptions().AddRewrite("^$", "healthcheck", true));
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -83,7 +86,7 @@ namespace Boilerplate.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.AddCustomHealthCheck();
+                endpoints.AddCustomHealthCheck(env);
                 endpoints.MapControllers();
             });
 
@@ -91,7 +94,7 @@ namespace Boilerplate.Web
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = "swagger";
             });
 
             // useful for many purposes
