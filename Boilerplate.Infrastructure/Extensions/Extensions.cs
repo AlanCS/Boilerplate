@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BizCover.Api.Cars.Infrastructure
+namespace Boilerplate.Infrastructure.Extensions
 {
-    public static class Extensions
+    public static class GenericExtensions
     {
         public static IServiceCollection ThrowBadRequestOnBadModelValidation(this IServiceCollection services)
         {

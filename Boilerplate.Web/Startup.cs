@@ -1,5 +1,4 @@
 using AutoMapper;
-using BizCover.Api.Cars.Infrastructure;
 using Boilerplate.Infrastructure;
 using Boilerplate.Infrastructure.Exceptions;
 using Boilerplate.Infrastructure.Extensions;
